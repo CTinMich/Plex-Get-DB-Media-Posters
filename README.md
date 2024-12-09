@@ -1,60 +1,85 @@
+can 
 
-# Plex-DB-Covers-Downloader
+# Plex-Get-DB-Media-Posters
 
-Linux Python Script to download the covers stored in your Plex DB and store them as "poster.jpg" files in your movie library folders.
+A Linux Python script to download the poster images stored in your Plex media server database and save them as `poster.jpg` files in your movie and TV show library folders. The script assumes that each movie or TV show resides in its own folder.
 
+## Features
+- Downloads movie and TV show posters directly from your Plex server.
+- Saves posters as `poster.jpg` in the corresponding media directories.
+- Supports overwriting existing posters if desired.
+- Configurable paths for both movies and TV shows.
+- Works with Plex servers running in Docker or directly on a host system.
 
-# LICENSE
+## Requirements
+- Python 3.6 or greater.
+- `requests` library for API communication.
+- Linux or similar environment (the script can be adapted for Windows if needed).
 
-Creative Commons Attribution-NonCommercial 4.0 International License.
+## Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/CTinMich/Plex-Get-DB-Media-Posters.git
+   ```
+2. Navigate to the repository directory:
+   ```bash
+   cd Plex-Get-DB-Media-Posters
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.
+## Usage
+1. Open the script `Plex-Get-DB-Media-Posters.py` in a text editor or IDE.
+2. Update the following configuration variables with your Plex server details:
+   - `PLEX_URL`: Base URL of your Plex server (e.g., `http://192.168.1.100:32400`).
+   - `PLEX_TOKEN`: Your Plex API token.
+   - `MOVIES_SECTION_ID`: The library section ID for movies.
+   - `TV_SECTION_ID`: The library section ID for TV shows.
+   - `MOVIES_PATH_PREFIX_REAL`: Full path to your movie folders.
+   - `TV_SHOWS_PATH_PREFIX_REAL`: Full path to your TV show folders.
 
+3. Run the script with one or more options:
+   - Copy movie posters:
+     ```bash
+     python3 Plex-Get-DB-Media-Posters.py -m
+     ```
+   - Copy TV show posters:
+     ```bash
+     python3 Plex-Get-DB-Media-Posters.py -t
+     ```
+   - Overwrite existing posters:
+     ```bash
+     python3 Plex-Get-DB-Media-Posters.py -m -t -o
+     ```
 
-# Python Requirements
+4. The posters will be saved as `poster.jpg` in the respective media directories.
 
-Python v3.6 or greater.
+## Notes
+1. **Docker Path Mapping**:
+   - If you run Plex in a Docker container, configure `MOVIES_PATH_PREFIX_REAL` and `TV_SHOWS_PATH_PREFIX_REAL` to account for the difference between the Docker container path and the actual file path on your host system.
 
-Python "Requests" library 
-    
-    pip install -r requirements.txt or 
-    pip install requests).
+2. **TV Show Folder Matching**:
+   - The script assumes that TV show folders follow the naming convention `{TV SHOW} {tvdb-xxxx}` for accurate matching.
 
+3. **Getting Your Plex Token**:
+   - Navigate to a movie in your Plex library, click **Get Info**, and then **View XML**. The token is in the URL under the `Plex-Token` parameter.
 
-# Documentation
+## Example Folder Structures
+- Movies:
+  ```plaintext
+  /home/pi/Media/Movies/{MOVIE_NAME} {tmdb-xxxxx}/poster.jpg
+  ```
+- TV Shows:
+  ```plaintext
+  /home/pi/Media/TV Shows/{TV_SHOW_NAME} {tvdb-xxxx}/{SEASON}/poster.jpg
+  ```
 
-I just wrote this short Linux based python script and sharing it to anyone else that may find it useful.
+## Contributing
+Feel free to fork this repository and submit pull requests. Bug reports and feature requests are welcome!
 
-I wrote this script after I had to re-add my Plex Movies and TV libraries and realized I lost a lot of my fixed/custom poster art for my Movies/TVs.
+## License
+This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License](LICENSE).
 
-This script will look up what posters you currently have configured in your Plex DB and will save a copy of it as "poster.jpg" in each appropriate folder location. ***This does expect you are following the standard that each movie/show is in its own folder.
-
-You can then update your Plex library Movie library config to use "Use local assets " and then when you run a media library scan it will now use those posters first if you have to reload in the future.
-
-Other things to take in consideration:
-
-1) I run Plex in Linux Docker Container.  
-2) The Script can find the exact Movie folder path, but there was challenges in trying to find TV Show paths using the API so I fusged it a little to assume the folder matches the show "title" with a {xxxxx} after it for {tmdb-xxxx} string to help assure it found the correct folder path.  If anyone know how to get the physical paths for TV Shows using the API please send me a note!  
-3) My pathing:  
-   Physical Movies = "/home/pi/usbhdd/Media/Movies"  - Docker mapping sees it as "/Media/Movies"  
-   Physical TV Shows = "/home/pi/usbhdd-02/Media/'TV Shows'" - Docker mapping sees it as "/Media/'TV Shows'"  
-4) My file naming patterns:  
-   Movies = "/home/pi/usbhdd/Media/Movies/{MOVIE} {{tmdb-xxxxx}}"  
-   TV = "/home/pi/usbhdd-02/Media/'TV Shows'/{TV SHOW} {{tvdb-xxxx}}/{SEASON}"  
-
-I made no effort to make this work on Windows, but it can be used as a reference to those that want to go that route.
-
-Because I use docker... Plex's library does not have the "complete" path to my ext movie folders, so I have a path prefix variable in there to tack on the missing path pieces. If you do not use docker I think this script will still work, you just need to "blank out" the variable value.
-Variables:
-
-    PLEX_URL = 'http://<PLEX_SERVER_IP>:<PLEX_PORT>'  
-    PLEX_TOKEN = '<PLEX_TOKEN>'  
-    MOVIES_SECTION_ID = '<MOVIES_SECTION_ID>'  # Replace with your movies section ID from Plex  
-    TV_SECTION_ID = '<TV_SECTION_ID>'  # Replace with your TV Shows section ID from Plex  
-    MOVIES_PATH_PREFIX_REAL = '<PATH_TO_MOVIES>'  # Specify the real path prefix for movie files  
-    TV_SHOWS_PATH_PREFIX_REAL = '<PATH_TO_TV_SHOWS>'  # Specify the real path prefix for TV show files  
-
-
-If you do not know your Plex token the easiest way to do this is use the "Get Info" option on one of your movies.  In the Media Info box at the bottom click on the "view xml".  This will open the XML data in a browser.  The token can be seen at the end of the URL address line right after "Plex-Token="
-
-[Documentation](https://linktodocumentation)
+---
